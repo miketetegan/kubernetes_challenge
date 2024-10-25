@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.deploymentName}}
+  labels:
+    {{.Values.label}}
+#Deployment specifications
+spec:
+  replicas: {{.Values.replica}}
+  selector:
+    matchLabels:
+      {{.Values.matchLabel}}
+  template:
+    metadata:
+      labels:
+        {{.Values.matchLabel}}
+#Pod specifications
+    spec:
+      imagePullSecrets:
+      - name: {{.Values.imageSecretsName}}
+      containers:
+      -  name: {{.Values.containerName}}
+         image: {{.Values.containerImage}}
+         ports:
+         -  containerPort: {{.Values.containerPort}}
+         livenessProbe:
+           tcpSocket:
+             port: {{.Values.tcpProbePort}}
+           initialDelaySeconds: 10
+           periodSeconds: 5
+           failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: {{.Values.httpProbePath}}
+              port: {{.Values.httpProbePort}}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3
+         #envFrom:
+         #- secretRef:
+         #  name: db-secret
+         env:
+         - name: DB_PASSWORD
+           valueFrom:
+             secretKeyRef:
+               name: {{.Values.secretName}} #secret name
+               key: {{.Values.secretKey}}
+         envFrom:
+         - configMapRef:
+             name: {{.Values.configmapName}}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.serviceName}}
+spec:
+  selector:
+    {{.Values.serviceSelector}}
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: {{.Values.servicePort}}
+      targetPort: {{.Values.containerPort}} #need to match container port
+      nodePort: {{.Values.nodePort}} #external port used to access the service

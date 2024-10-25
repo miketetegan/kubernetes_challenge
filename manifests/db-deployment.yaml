@@ -50,13 +50,13 @@ spec:
         volumeMounts:
         - name: db-init
           mountPath: /docker-entrypoint-initdb.d
-        - name: db_data
+        - name: db-data
           mountPath: /var/lib/mysql
       volumes:
       - name: db-init
         configMap:
           name: init-configmap
-      - name: db_data
+      - name: db-data
         persistentVolumeClaim:
           claimName: pvclaim
 
