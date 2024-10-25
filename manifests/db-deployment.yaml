@@ -17,6 +17,21 @@ spec:
 #Pod specifications
     spec:
       containers:
+         livenessProbe:
+           tcpSocket:
+             port: 3306
+           initialDelaySeconds: 10
+           periodSeconds: 5
+           failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+              - healthcheck.sh
+              - --connect
+              - --innodb_initialized
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold:
       -  name: db
          image: mariadb:latest
          ports:
@@ -27,13 +42,23 @@ spec:
              configMapKeyRef:
                name: env-configmap
                key: MYSQL_ROOT_PASSWORD
+         - name: DB_PASSWORD
+           valueFrom:
+             secretKeyRef:
+               name: db-secret
+               key: DB_PASSWORD
          volumeMounts:
          - name: db-init
            mountPath: /docker-entrypoint-initdb.d
+         - name: db_data
+           mountPath: /var/lib/mysql
       volumes:
        - name: db-init
          configMap:
            name: init-configmap
+       - name: db_data
+         persistentVolumeClaim:
+           claimName: pvclaim
 
 ---
 apiVersion: v1

@@ -1,7 +1,7 @@
 //Database initialization
 
 CREATE DATABASE ecomdb;
-CREATE USER 'ecomuser'@'%' IDENTIFIED BY 'ecompassword';
+CREATE USER 'ecomuser'@'%' IDENTIFIED BY '${DB_PASSWORD}';
 GRANT ALL PRIVILEGES ON *.* TO 'ecomuser'@'%';
 FLUSH PRIVILEGES;
 

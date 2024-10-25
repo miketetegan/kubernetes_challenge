@@ -1,0 +1,13 @@
+#/mnt/db_data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvclaim
+spec:
+  #storageClassName: manual
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
