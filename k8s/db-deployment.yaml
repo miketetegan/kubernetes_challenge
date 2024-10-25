@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+  labels:
+    app: db
+#Deployment specifications
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+#Pod specifications
+    spec:
+      containers:
+      -  name: db
+         image: mariadb:latest
+         ports:
+         -  containerPort: 3306
+         env:
+         - name: MYSQL_ROOT_PASSWORD
+           valueFrom:
+             configMapKeyRef:
+               name: env-configmap
+               key: MYSQL_ROOT_PASSWORD
+         volumeMounts:
+         - name: db-init
+           mountPath: /docker-entrypoint-initdb.d
+      volumes:
+       - name: db-init
+         configMap:
+           name: init-configmap
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  selector:
+    app: db #find the pod it's gonna attached to 
+  ports:
+  - protocol: TCP
+    port: 3306
+    targetPort: 3306 #need to match container port
