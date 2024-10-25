@@ -29,13 +29,13 @@ spec:
            initialDelaySeconds: 10
            periodSeconds: 5
            failureThreshold: 3
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 80
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            failureThreshold:
+         readinessProbe:
+           httpGet:
+             path: /
+             port: 80
+           initialDelaySeconds: 10
+           periodSeconds: 5
+           failureThreshold: 3
          #envFrom:
          #- secretRef:
          #  name: db-secret
