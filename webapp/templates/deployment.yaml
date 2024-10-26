@@ -29,13 +29,13 @@ spec:
            initialDelaySeconds: 10
            periodSeconds: 5
            failureThreshold: 3
-          readinessProbe:
-            httpGet:
-              path: {{.Values.httpProbePath}}
-              port: {{.Values.httpProbePort}}
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            failureThreshold: 3
+         readinessProbe:
+           httpGet:
+             path: {{.Values.httpProbePath}}
+             port: {{.Values.httpProbePort}}
+           initialDelaySeconds: 10
+           periodSeconds: 5
+           failureThreshold: 3
          #envFrom:
          #- secretRef:
          #  name: db-secret
@@ -48,18 +48,3 @@ spec:
          envFrom:
          - configMapRef:
              name: {{.Values.configmapName}}
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{.Values.serviceName}}
-spec:
-  selector:
-    {{.Values.serviceSelector}}
-  type: NodePort
-  ports:
-    - protocol: TCP
-      port: {{.Values.servicePort}}
-      targetPort: {{.Values.containerPort}} #need to match container port
-      nodePort: {{.Values.nodePort}} #external port used to access the service
